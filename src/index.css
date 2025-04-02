@@ -66,3 +66,11 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.productCard{
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: white;
+}
+@import "tailwindcss";

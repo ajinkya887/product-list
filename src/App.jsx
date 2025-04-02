@@ -1,5 +1,6 @@
 import "./App.css";
 import AddProduct from "./components/AddProduct";
+import ErrorBoundary from "./components/ErrorBoundary";
 import Greeting from "./components/Greeting";
 import Items from "./components/Items";
 import { ProductContext, ProductProvider } from "./components/ProductContext";
@@ -31,7 +32,14 @@ function App() {
           <Routes>
             {/* <Route path="/" element={<ProductList />} /> */}
             <Route path="/" element={<ProductListApi />} />
-            <Route path="/product/:id" element={<ProductDetails />} />
+            <Route
+              path="/product/:id"
+              element={
+                <ErrorBoundary>
+                  <ProductDetails />
+                </ErrorBoundary>
+              }
+            />
           </Routes>
         </Router>
       </ProductProvider>
