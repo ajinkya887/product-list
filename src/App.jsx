@@ -1,14 +1,13 @@
 import "./App.css";
 import AddProduct from "./components/AddProduct";
 import ErrorBoundary from "./components/ErrorBoundary";
-import Greeting from "./components/Greeting";
-import Items from "./components/Items";
 import { ProductContext, ProductProvider } from "./components/ProductContext";
 import ProductDetails from "./components/ProductDetails";
 import ProductList from "./components/ProductList";
 import ProductListApi from "./components/ProductListApi";
 import UserCard from "./components/UserCard";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import { lazy, Suspense } from "react";
 
 function App() {
   const users = [
@@ -23,15 +22,18 @@ function App() {
       {users.map((user, index) => (
         <UserCard key={index} name={user.name} role={user.role} />
       ))}
-
-      <Items /> */}
       {/* <ProductList /> */}
-      {/* <AddProduct /> */}
       <ProductProvider>
         <Router>
           <Routes>
-            {/* <Route path="/" element={<ProductList />} /> */}
-            <Route path="/" element={<ProductListApi />} />
+            <Route
+              path="/"
+              element={
+                <Suspense fallback={<p>Loading...</p>}>
+                  <ProductListApi />
+                </Suspense>
+              }
+            />
             <Route
               path="/product/:id"
               element={
@@ -40,6 +42,7 @@ function App() {
                 </ErrorBoundary>
               }
             />
+            <Route path="/add-product" element={<AddProduct />} />
           </Routes>
         </Router>
       </ProductProvider>
