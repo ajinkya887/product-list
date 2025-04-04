@@ -8,6 +8,7 @@ import ProductListApi from "./components/ProductListApi";
 import UserCard from "./components/UserCard";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import { lazy, Suspense } from "react";
+import UpdateProduct from "./components/UpdateProduct";
 
 function App() {
   const users = [
@@ -24,27 +25,23 @@ function App() {
       ))}
       {/* <ProductList /> */}
       <ProductProvider>
-        <Router>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <Suspense fallback={<p>Loading...</p>}>
-                  <ProductListApi />
-                </Suspense>
-              }
-            />
-            <Route
-              path="/product/:id"
-              element={
-                <ErrorBoundary>
-                  <ProductDetails />
-                </ErrorBoundary>
-              }
-            />
-            <Route path="/add-product" element={<AddProduct />} />
-          </Routes>
-        </Router>
+        <ErrorBoundary>
+          <Router>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <Suspense fallback={<p>Loading...</p>}>
+                    <ProductListApi />
+                  </Suspense>
+                }
+              />
+              <Route path="/product/:id" element={<ProductDetails />} />
+              <Route path="/add-product" element={<AddProduct />} />
+              <Route path="/update-product/:id" element={<UpdateProduct />} />
+            </Routes>
+          </Router>
+        </ErrorBoundary>
       </ProductProvider>
     </>
   );

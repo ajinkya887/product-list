@@ -1,6 +1,7 @@
 import React, { useEffect, useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ProductContext } from "./ProductContext";
+import { ProductContext } from "../components/ProductContext";
+import ProductTable from "./ProductTable";
 
 const ProductList = () => {
   const navigate = useNavigate();
@@ -37,6 +38,14 @@ const ProductList = () => {
       });
   }, []);
 
+  const deleteProduct = (productID) => {
+    fetch(`https://fakestoreapi.com/products/${productID}`, {
+      method: "DELETE",
+    })
+      .then((res) => res.json())
+      .then((data) => alert("Product deleted successfully"));
+  };
+
   return (
     <div>
       {loading && <p>Loading Products....</p>}
@@ -46,54 +55,15 @@ const ProductList = () => {
           onClick={() => navigate("/add-product")}
           className="bg-blue-600 hover:bg-blue-700 text-blue-400 font-bold rounded-lg shadow-md transition transform hover:scale-105"
         >
-          Add Your Story
+          Add New Product
         </button>
       </div>
       <p className="text-red-600 p-2"> * Click on any product to view more</p>
-      {/* <div className="productListDiv">
-        {products.map((prod) => (
-          <div
-            key={prod.id}
-            className="p-8 m-1 border-2 rounded-md border-gray-200 bg-gray-200"
-          >
-            <Link to={`/product/${prod.id}`}>{prod.title}</Link>
-          </div>
-        ))}
-      </div> */}
-
-      <table className="border-separate border border-gray-400 m-10 w-full text-left bg-white shadow-lg ">
-        <thead className="bg-purple-500 text-white">
-          <tr>
-            <th className="border border-gray-300 p-3">Title</th>
-            <th className="border border-gray-300 p-3">Image</th>
-          </tr>
-        </thead>
-        <tbody>
-          {paginatedProducts.map((product) => (
-            <tr
-              key={product.id}
-              className={product.id % 2 === 0 ? "bg-gray-100" : "bg-white"}
-            >
-              <td className="border border-gray-300 p-3 hover:bg-purple-100 transition-all">
-                <Link
-                  to={`/product/${product.id}`}
-                  className="text-blue-600 hover:underline"
-                >
-                  {product.title}
-                </Link>
-              </td>
-              <td className="border border-gray-300 p-3 flex justify-center items-center">
-                <img
-                  className="w-12 h-12 object-contain rounded-md shadow-md"
-                  src={product.image}
-                  width={45}
-                />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
+      <ProductTable
+        products={paginatedProducts}
+        deleteProduct={deleteProduct}
+        navigate={navigate}
+      />
       <button
         className="px-4 mx-3"
         disabled={currentPage === 1}

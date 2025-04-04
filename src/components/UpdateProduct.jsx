@@ -1,11 +1,11 @@
-import axios from "axios";
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
-const AddProduct = () => {
+const UpdateProduct = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
+
   const [productForm, setProductForm] = useState({
-    id: 21,
     title: "",
     price: "",
     description: "",
@@ -13,35 +13,64 @@ const AddProduct = () => {
     image: "",
   });
 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await fetch(`https://fakestoreapi.com/products/${id}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch product data.");
+        }
+        const data = await response.json();
+        setProductForm(data);
+      } catch (err) {
+        setError(err.message);
+        console.log("Error: ", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
+
   const handleChange = (e) => {
     setProductForm({
       ...productForm,
-      [e.target.name]: e.target.value,
+      [e.target.name]:
+        e.target.name === "price" ? Number(e.target.value) : e.target.value,
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`https://fakestoreapi.com/products`, {
-        method: "POST",
+      const response = await fetch(`https://fakestoreapi.com/products/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(productForm),
       });
-      setProductForm({
-        title: "",
-        price: "",
-        description: "",
-        category: "",
-        image: "",
-      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update product.");
+      }
+
+      alert("Product updated successfully!");
+      navigate(`/product/${id}`);
     } catch (err) {
-      console.log("Error adding the product:", err);
+      alert(err.message);
     }
   };
 
+  if (loading) return <p>Loading product...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
+
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <h2 className="text-xl font-bold mb-4">Update Product</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <label className="block font-semibold">
           Title:
           <input
@@ -101,16 +130,16 @@ const AddProduct = () => {
             className="w-full p-2 border rounded"
           />
         </label>
+
         <button
           type="submit"
-          onClick={() => navigate("/")}
-          className="bg-blue-600 hover:bg-blue-700 text-blue-400 font-bold rounded-lg shadow-md transition transform hover:scale-105"
+          className="bg-blue-600 hover:bg-blue-700 my-8 text-blue-400 font-bold rounded-lg shadow-md transition transform hover:scale-105"
         >
-          Submit
+          Update Product
         </button>
       </form>
     </div>
   );
 };
 
-export default AddProduct;
+export default UpdateProduct;
